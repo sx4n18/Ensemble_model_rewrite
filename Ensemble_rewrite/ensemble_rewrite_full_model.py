@@ -9,7 +9,8 @@ import pandas as pd
 from tensorflow.keras.losses import categorical_crossentropy
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import normalize
-
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -20,6 +21,8 @@ from tensorflow.keras.utils import normalize
 ########################################################################################################################
 
 ## class functin define
+
+## class for each small ANN implementation
 class ANN_simple_model(keras.Model):
 
     def __init__(self, input_num, initializer):
@@ -40,12 +43,26 @@ class ANN_simple_model(keras.Model):
 
         return self.outlayer(x)
 
+## Function of the ensemble voting
+## input: a 3 dimensional array that records the raw output of the network, (diagonal_number, sample_number, class_number)
+## output: just a majority vote of the final classification
+def majorvote(all_diagonal_prediction):
+    final_class_of_each_ANN = np.argmax(all_diagonal_prediction, axis=2)
+    final_prediction_after_voting = np.zeros((total_testing_number),'int')
+    for sample_index in range(total_testing_number):
+        bin_count = np.bincount(final_class_of_each_ANN[:, sample_index])
+        final_prediction_after_voting[sample_index] = np.argmax(bin_count)
+
+    return final_prediction_after_voting
 
 ## load the dataset
 
 diagonal_num = 20
 raw_data_lst = []
-each_prediction = np.zeros(shape=(diagonal_num,1350,18))
+total_sample_number = 9000
+total_testing_number = int(0.15*total_sample_number)
+total_cls_num = 18
+each_prediction = np.zeros(shape=(diagonal_num,total_testing_number,total_cls_num))
 label = np.load('./data_set/label.npy')
 label_minus_1 = label - 1
 label_1_hot = to_categorical(label_minus_1)
@@ -88,5 +105,28 @@ for index, single_diagonal in enumerate(raw_data_lst):
 
     each_prediction[index] = small_ANN_model.predict(Test_X)
 
-np.save('./prediction/final_raw_prediction.npy', each_prediction)
+#np.save('./prediction/final_raw_prediction.npy', each_prediction)
 
+## final accuracy by majority vote and print out and produce a confusin matrix
+final_predicted_lb = majorvote(each_prediction)
+actual_lb = np.argmax(Test_y, axis=1)
+cf_matrix = confusion_matrix(actual_lb, final_predicted_lb)
+diff = actual_lb - final_predicted_lb
+wrong = np.count_nonzero(diff)
+final_accuracy = (total_testing_number-wrong)/total_testing_number
+print('Final prediction gives a test accuracy of {acc:.2%}'.format(acc=final_accuracy))
+
+## plot out the confusion matrix
+ax = sns.heatmap(cf_matrix, annot=True, fmt='', cmap='Blues')
+
+ax.set_title('Confusion matrix of the Ensemble learning model')
+ax.set_ylabel('Actual label')
+ax.set_xlabel('\nPredicted label')
+
+## Ticket labels - List must be in alphabetical order
+All_the_label = ['Am241', 'Ba133', 'BGD', 'Co57', 'Co60', 'Cs137', 'DU', 'EU152', 'Ga67', 'HEU', 'I131', 'Ir192', 'Np237', 'Ra226', 'Tc99m', 'Th232', 'Tl201', 'WGPu']
+ax.xaxis.set_ticklabels(All_the_label)
+ax.yaxis.set_ticklabels(All_the_label)
+
+## Display the visualization of the Confusion Matrix.
+plt.show()
