@@ -17,8 +17,8 @@ import seaborn as sns
 #                                                                                                                      #
 #   This is the script of an ensemble model of 20 3-layer ANN neural networks for the 1024 channel 18 classes
 #   isotopes dataset.                                                                                                  #
-#
-#
+#   This is the 2nd version where activation function has been replaced with relu and input dataset was logarithmically
+#   preprocessed so that the conversion of this model to SNN would be more convenient.
 ########################################################################################################################
 
 ## class functin define
@@ -30,7 +30,7 @@ class ANN_simple_model(keras.Model):
         super(ANN_simple_model, self).__init__()
         self.input_num = input_num
         self.initializer = initializer
-        self.hidden = keras.layers.Dense(40, activation='sigmoid', kernel_initializer=self.initializer)
+        self.hidden = keras.layers.Dense(40, activation='relu', kernel_initializer=self.initializer)
         self.outlayer = keras.layers.Dense(18, activation='softmax', kernel_initializer=self.initializer)
         self.dplay1 = keras.layers.Dropout(rate=0.25)
         self.dplay2 = keras.layers.Dropout(rate=0.25)
@@ -76,7 +76,7 @@ label_minus_1 = label - 1
 label_1_hot = to_categorical(label_minus_1)
 
 for i in range(diagonal_num):
-    raw_np_file = np.load('./data_set/diagonal_' + str(i) + '.npy')
+    raw_np_file = np.load('./data_set/log_preprocess/ratio_log_prepro/log_data_preprocess_' + str(i) + '.npy')
     raw_data_lst.append(raw_np_file)
 
 ## build model and training
@@ -85,9 +85,9 @@ initializer = keras.initializers.HeNormal()
 
 for index, single_diagonal in enumerate(raw_data_lst):
 
-    path = './Ensemble_CP/diagonal_' + str(index)
+    path = './Ensemble_CP_log/diagonal_' + str(index)
     if not (os.path.isdir(path)):
-        os.mkdir(path)
+        os.makedirs(path)
     #hdf5_path = os.path.join(path, 'best_model.h5')
     Train_X, Test_X, Train_y, Test_y = train_test_split(single_diagonal, label_1_hot, test_size=0.15,
                                                         random_state=42, shuffle=True)
@@ -108,7 +108,7 @@ for index, single_diagonal in enumerate(raw_data_lst):
                         batch_size=100,
                         shuffle=True,
                         validation_split=0.18,
-                        callbacks=[keras.callbacks.EarlyStopping(patience=50)]#, save_best_val_loss_cb]
+                        callbacks=[keras.callbacks.EarlyStopping(patience=50), save_best_val_loss_cb]
                         )
 
     each_prediction[index] = small_ANN_model.predict(Test_X)
@@ -125,7 +125,7 @@ cf_matrix = confusion_matrix(actual_lb, final_predicted_lb_hard_voting)
 #final_accuracy = (total_testing_number-wrong)/total_testing_number
 final_accuracy_hard = accuracy_score(actual_lb, final_predicted_lb_hard_voting)
 final_accuracy_soft = accuracy_score(actual_lb, final_predicted_lb_soft_voting)
-print('Final prediction based on soft voting gives a test accuracy of {acc:.2%'.format(acc=final_accuracy_soft))
+print('Final prediction based on soft voting gives a test accuracy of {acc:.2%}'.format(acc=final_accuracy_soft))
 print('Final prediction based on hard voting gives a test accuracy of {acc:.2%}'.format(acc=final_accuracy_hard))
 
 ## plot out the confusion matrix
