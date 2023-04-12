@@ -17,7 +17,7 @@ import seaborn as sns
 #                                                                                                                      #
 #   This is the script of an ensemble model of 20 3-layer ANN neural networks for the 1024 channel 18 classes
 #   isotopes dataset.                                                                                                  #
-#
+#   The very first version that has no logarithm preprocessing, only bin-ratioed input data.
 #
 ########################################################################################################################
 
@@ -125,7 +125,7 @@ cf_matrix = confusion_matrix(actual_lb, final_predicted_lb_hard_voting)
 #final_accuracy = (total_testing_number-wrong)/total_testing_number
 final_accuracy_hard = accuracy_score(actual_lb, final_predicted_lb_hard_voting)
 final_accuracy_soft = accuracy_score(actual_lb, final_predicted_lb_soft_voting)
-print('Final prediction based on soft voting gives a test accuracy of {acc:.2%'.format(acc=final_accuracy_soft))
+print('Final prediction based on soft voting gives a test accuracy of {acc:.2%}'.format(acc=final_accuracy_soft))
 print('Final prediction based on hard voting gives a test accuracy of {acc:.2%}'.format(acc=final_accuracy_hard))
 
 ## plot out the confusion matrix
