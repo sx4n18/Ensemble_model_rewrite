@@ -36,12 +36,12 @@ def major_softvote(all_diagona_prediction):
 def sub_cls_to_sequential(old_sub_cls_model, current_index):
     variables = old_sub_cls_model.variables
     new_sequential = keras.Sequential([
+        keras.layers.Input(shape=(1023-current_index,)),
         keras.layers.Dense(40, activation='sigmoid'),
         keras.layers.Dense(18, activation='softmax')
     ])
-    new_sequential.build(input_shape=(None, 1023-current_index))
+    #new_sequential.build(input_shape=(None, 1023-current_index))
     new_sequential.set_weights(variables)
     new_sequential.compile(loss=categorical_crossentropy, optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
-
 
     return new_sequential
