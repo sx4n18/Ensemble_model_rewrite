@@ -28,3 +28,5 @@ experiment
 single_simple_dataset/dataset
 Ensemble_rewrite/data_set/*.npy
 Ensemble_rewrite/data_set/log_preprocess
+Ensemble_rewrite/Arduino_imp/tflite_model
+Ensemble_rewrite/Arduino_imp/whittled_ensemble_model

@@ -1,9 +1,12 @@
-import tensorflow.keras as keras
+#import tensorflow.keras as keras
+import keras
 import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from fun_n_class.main_cls import data_set_generator
+from fun_n_class.main_fun import give_final_result_from_ensemble
+from sklearn.metrics import accuracy_score
 
 ################################################################################################
 # This script will try to concatenate the chosen 5 networks and see how much they would take in
@@ -60,7 +63,17 @@ print(new_ensemble_net.output_shape)
 
 ## save this model for later observation
 new_ensemble_net.save('./whittled_ensemble_model/whittled_net_5.h5')
-
+new_ensemble_net.compile(optimizer=keras.optimizers.Adam(), loss=keras.losses.categorical_crossentropy,
+                         metrics=['accuracy'])
+print("Verify the accuracy of the concated net")
+Test_label = [Test_y] * 5
+concated_Test_img = np.concatenate(X_test_lst, axis=1)
+concated_Test_label = np.concatenate(Test_label, axis=1)
+ensemble_prediction = new_ensemble_net.predict(concated_Test_img)
+voted_prediction = give_final_result_from_ensemble(ensemble_prediction, 18)
+acc = accuracy_score(np.argmax(Test_y, axis=1), voted_prediction)
+#_, acc = new_ensemble_net.evaluate(concated_Test_img, concated_Test_label)
+print("Accuracy is :", acc)
 
 # convert the network to tflite and quantisation
 
