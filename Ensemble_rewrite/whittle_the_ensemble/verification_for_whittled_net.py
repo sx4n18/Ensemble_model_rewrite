@@ -22,13 +22,13 @@ label_1_hot = to_categorical(label_minus_1)
 X_train_lst = []
 X_test_lst = []
 model_lst = []
-best_combo_5 = np.array([0, 2, 10, 16, 17])
+best_combo_5 = np.array([5, 8, 11, 17, 19])
 individual_acc = []
 all_acc = []
 for dia_num in range(diagonal_num):
-    model_this_dia = keras.models.load_model('../Ensemble_CP/HDF5/diagonal_'+str(dia_num)+'.h5')
+    model_this_dia = keras.models.load_model('../Ensemble_CP_log_plus_1_w_subtraction/HDF5/diagonal_'+str(dia_num)+'.h5')
     model_lst.append(model_this_dia)
-    raw_np_file = np.load('../data_set/diagonal_' + str(dia_num) + '.npy')
+    raw_np_file = np.load('../data_set/log_preprocess/log_plus_1_subtraction_prepro/diagonal_preprocess_log_' + str(dia_num) + '.npy')
     Train_X, Test_X, Train_y, Test_y = train_test_split(raw_np_file, label_1_hot, test_size=0.15,
                                                         random_state=42, shuffle=True)
 

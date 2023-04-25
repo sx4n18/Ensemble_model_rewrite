@@ -29,9 +29,9 @@ max_acc = 0
 max_acc_lst_5 = []
 max_combo_5 = []
 for dia_num in range(diagonal_num):
-    model_this_dia = keras.models.load_model('../Ensemble_CP/HDF5/diagonal_'+str(dia_num)+'.h5')
+    model_this_dia = keras.models.load_model('../Ensemble_CP_log_plus_1_w_subtraction/HDF5/diagonal_'+str(dia_num)+'.h5')
     model_lst.append(model_this_dia)
-    raw_np_file = np.load('../data_set/diagonal_' + str(dia_num) + '.npy')
+    raw_np_file = np.load('../data_set/log_preprocess/log_plus_1_subtraction_prepro/diagonal_preprocess_log_' + str(dia_num) + '.npy')
     Train_X, Test_X, Train_y, Test_y = train_test_split(raw_np_file, label_1_hot, test_size=0.15,
                                                         random_state=42, shuffle=True)
 

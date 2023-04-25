@@ -112,6 +112,7 @@ for index, single_diagonal in enumerate(raw_data_lst):
                         validation_split=0.18,
                         callbacks=[keras.callbacks.EarlyStopping(patience=50), save_best_val_loss_cb]
                         )
+    small_ANN_model.save('./Ensemble_CP_log_plus_1_w_subtraction_re/diagonal_'+str(index))
 
     each_prediction[index] = small_ANN_model.predict(Test_X)
 

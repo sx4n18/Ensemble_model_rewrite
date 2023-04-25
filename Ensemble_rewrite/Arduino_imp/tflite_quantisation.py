@@ -1,5 +1,5 @@
-#import tensorflow.keras as keras
-import keras
+import tensorflow.keras as keras
+#import keras
 import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 # the form of tflite.
 ################################################################################################
 
-chosen_combo_5 = np.array([0, 2, 10, 16, 17])
+chosen_combo_5 = np.array([5, 8, 11, 17, 19])
 model_lst = []
 concat_input = []
 concat_output = []
@@ -25,8 +25,8 @@ X_test_lst = []
 # reconstruct the ensemble net with just the chosen 5 networks
 
 for item in chosen_combo_5:
-    diagonal_net = keras.models.load_model('../Ensemble_CP/HDF5/diagonal_'+str(item)+'.h5')
-    raw_np_file = np.load('../data_set/diagonal_'+str(item)+'.npy')
+    diagonal_net = keras.models.load_model('../Ensemble_CP_log_plus_1_w_subtraction/HDF5/diagonal_'+str(item)+'.h5')
+    raw_np_file = np.load('../data_set/log_preprocess/log_plus_1_subtraction_prepro/diagonal_preprocess_log_'+str(item)+'.npy')
     Train_X, Test_X, Train_y, Test_y = train_test_split(raw_np_file, label_1_hot, test_size=0.15,
                                                         random_state=42, shuffle=True)
     X_test_lst.append(Test_X)
@@ -38,12 +38,12 @@ for item in chosen_combo_5:
 #concated_output_lay = keras.layers.concatenate(concat_output, name='concat_output_layer')
 
 ## create a uni input and break it down into different range for the different net's feed
-input_tensor = keras.layers.Input(5070,)
-group_1 = keras.layers.Lambda(lambda x: x[:, :1023], output_shape=(1023,))(input_tensor)
-group_2 = keras.layers.Lambda(lambda x: x[:, 1023:2044], output_shape=(1021,))(input_tensor)
-group_3 = keras.layers.Lambda(lambda x: x[:, 2044:3057], output_shape=(1013,))(input_tensor)
-group_4 = keras.layers.Lambda(lambda x: x[:, 3057:4064], output_shape=(1007,))(input_tensor)
-group_5 = keras.layers.Lambda(lambda x: x[:, 4064:], output_shape=(1006,))(input_tensor)
+input_tensor = keras.layers.Input(5055,)
+group_1 = keras.layers.Lambda(lambda x: x[:, :1018], output_shape=(1023,))(input_tensor)
+group_2 = keras.layers.Lambda(lambda x: x[:, 1018:2033], output_shape=(1021,))(input_tensor)
+group_3 = keras.layers.Lambda(lambda x: x[:, 2033:3045], output_shape=(1013,))(input_tensor)
+group_4 = keras.layers.Lambda(lambda x: x[:, 3045:4051], output_shape=(1007,))(input_tensor)
+group_5 = keras.layers.Lambda(lambda x: x[:, 4051:], output_shape=(1006,))(input_tensor)
 
 ## feed different net with different part of the input and get the output tensor
 x_out_1 = model_lst[0](group_1)

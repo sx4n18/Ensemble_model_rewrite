@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 ################################################################################################
 
 
-chosen_combo_5 = np.array([0, 2, 10, 16, 17])
+chosen_combo_5 = np.array([5, 8, 11, 17, 19])
 actual_lb = np.load('../data_set/label.npy')
 label_1_hot = to_categorical(actual_lb-1)
 X_train_lst = []
@@ -21,7 +21,7 @@ X_test_lst = []
 
 # get the training and testing data ready for validation
 for item in chosen_combo_5:
-    raw_np_file = np.load('../data_set/diagonal_' + str(item) + '.npy')
+    raw_np_file = np.load('../data_set/log_preprocess/log_plus_1_subtraction_prepro/diagonal_preprocess_log_' + str(item) + '.npy')
     Train_X, Test_X, Train_y, Test_y = train_test_split(raw_np_file, label_1_hot, test_size=0.15,
                                                         random_state=42, shuffle=True)
     X_test_lst.append(Test_X)

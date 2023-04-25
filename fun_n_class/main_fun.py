@@ -32,11 +32,15 @@ def major_softvote(all_diagona_prediction):
     return final_prediction_after_voting
 
 
-def sub_cls_to_sequential(old_sub_cls_model, current_index):
+def sub_cls_to_sequential(old_sub_cls_model, current_index, original=True):
     variables = old_sub_cls_model.variables
+    if original:
+        act_option = 'sigmoid'
+    else:
+        act_option = 'relu'
     new_sequential = keras.Sequential([
         keras.layers.Input(shape=(1023 - current_index,)),
-        keras.layers.Dense(40, activation='sigmoid'),
+        keras.layers.Dense(40, activation=act_option),
         keras.layers.Dense(18, activation='softmax')
     ])
     # new_sequential.build(input_shape=(None, 1023-current_index))

@@ -30,3 +30,4 @@ Ensemble_rewrite/data_set/*.npy
 Ensemble_rewrite/data_set/log_preprocess
 Ensemble_rewrite/Arduino_imp/tflite_model
 Ensemble_rewrite/Arduino_imp/whittled_ensemble_model
+Ensemble_rewrite/Ensemble_CP_log_plus_1_w_subtraction_re
